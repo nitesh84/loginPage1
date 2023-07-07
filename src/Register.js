@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [failed,setFailed]=useState(false);
   const navigate = useNavigate();
-
+// eslint-disable-next-line
   const handleSubmit = useCallback(
     debounce(async () => {
       try {
@@ -20,13 +21,15 @@ function App() {
   
         if (response.ok) {
           console.log('User saved successfully', response);
+          navigate('/login');
         } else {
+          setFailed(true);
           console.error('An error occurred');
         }
       } catch (error) {
         console.error('An error occurred', error);
       }
-      navigate('/login');
+     
     }, 500),
     [username, password, navigate, debounce]
   );
@@ -80,6 +83,7 @@ function App() {
         </label>
         <br />
         <button type="submit">Submit</button>
+        {failed && <p style={{color:"red"}}>Something went wrong plz try again</p>}
       </form>
     </div>
   );

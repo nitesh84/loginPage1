@@ -14,6 +14,12 @@ mongoose.connect('mongodb://localhost:27017/myapp', {
 const userSchema = new mongoose.Schema({
   username: String,
   password: String,
+  quillContent:[{
+    type:{
+      type:String
+    },
+    data:String
+}]
 });
 
 
@@ -79,7 +85,46 @@ app.post('/api/login', async (req, res) => {
       res.status(500).send('Error checking user');
     }
   });
-  
+
+
+  app.post('/api/save-content', async (req, res) => {
+    const { username, content } = req.body;
+  console.log("backend",username,content);
+    try {
+      const user = await User.findOne({ username });
+      console.log("backend user",user);
+      if (user ) {
+        user.quillContent.push({ type: 'text', data: content });
+        console.log(user);
+        await user.save();
+        res.json({ message: 'Content saved successfully' });
+      } else {
+        res.status(404).json({ error: 'User not found' });
+      }
+    } catch (error) {
+      console.error('Error saving content:', error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  });
+
+  app.get('/api/get-content', async (req, res) => {
+    const { username } = req.query;
+    try {
+      const user = await User.findOne({ username });
+      console.log("leng",user.quillContent.length>0);
+      if (user &&  user.quillContent.length>0) {
+        const content = user.quillContent[user.quillContent.length - 1].data;
+        res.json({ content });
+      } else if(user && !user.quillContent.length>0){
+        res.json("");
+      } else {
+        res.status(404).json({ error: 'User not found' });
+      }
+    } catch (error) {
+      console.error('Error fetching content:', error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  });
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

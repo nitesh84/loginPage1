@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import {  useNavigate } from 'react-router-dom';
-import { setAuthenticated } from './authSlice';
 import {isEqual} from 'lodash'
  
 export const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [submit,setSubmit]=useState(false);
+ 
   
   const navigate=useNavigate();
-  const dispatch=useDispatch();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmit(true);
+
 
     try {
       // Send the login data to the backend API
@@ -21,6 +21,7 @@ export const Login = () => {
       const response = await fetch(`http://localhost:5000/checkUser?username=${username}&password=${password}`, {
       method: 'GET',
       // headers: {
+       
       //   'Content-Type': 'application/json',
       // },
       // body: JSON.stringify({ username, password }),
@@ -29,14 +30,15 @@ export const Login = () => {
 console.log(response,response.ok);
       if (response.ok) {
         const result = await response.text();
-        console.log("asdasd",result,isEqual(result.message, 'User exists and password is correct') );
+        console.log("asdasd",result,isEqual(result, 'User exists and password is correct') );
         if(isEqual(result, 'User exists and password is correct')   ) 
         { 
-          dispatch(setAuthenticated());
+          localStorage.setItem("user",username);
           navigate(`/welcome/${username}`);
-        }
-      } else {
-        console.error('An error occurred');
+        } else {
+          console.error('An error occurred');
+      }
+       
       }
     } catch (error) {
       console.error('An error occurred', error);
@@ -74,7 +76,7 @@ console.log(response,response.ok);
         </label>
         <br />
         <button type="submit">Submit</button>
-        {submit && <p>Either username or password is wrong</p>}
+        {submit && <p style={{color:"red"}}>Either username or password is wrong</p>}
       </form>
     </div>
   );

@@ -1,10 +1,11 @@
 import React from 'react';
-import {  Navigate } from 'react-router-dom';
+import {  Navigate, useParams } from 'react-router-dom';
+import {isEqual,get} from 'lodash'
 
-const PrivateRoute = ({ path, isAuthenticated, ...props }) => {
+const PrivateRoute = ({ path, ...props }) => {
 //   const navigate = useNavigate();
-console.log(isAuthenticated);
-  if (!isAuthenticated) {
+const userdetails=useParams();
+  if (!isEqual(localStorage.getItem("user"),get(userdetails,"username",""))) {
     // Redirect to login if not authenticated
     return <Navigate to="/login" />;
   }
