@@ -1,0 +1,17 @@
+*{
+    margin:0px;
+    padding:0px;
+    box-sizing: border-box;
+}
+
+.save{
+    position: relative;
+    left: 50%;
+    margin: 10px;
+}
+
+.button{
+    cursor: pointer;
+    border-radius: 10px;
+    min-width: 100px
+}

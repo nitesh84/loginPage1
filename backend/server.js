@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const multer=require('multer');
 
 const app = express();
 const PORT = 5000; 
@@ -14,12 +15,7 @@ mongoose.connect('mongodb://localhost:27017/myapp', {
 const userSchema = new mongoose.Schema({
   username: String,
   password: String,
-  quillContent:[{
-    type:{
-      type:String
-    },
-    data:String
-}]
+  quillContent:Array,
 });
 
 
@@ -28,7 +24,10 @@ const User = mongoose.model('User', userSchema);
 // Parse incoming requests
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+const upload=multer();
+app.use(upload.any());
 app.use(cors()); // Add this line to enable CORS for all routes
+
 
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
@@ -53,7 +52,6 @@ app.post('/api/login', async (req, res) => {
       await newUser.save();
       res.json({ message: 'User saved successfully' });
       const users=await User.find();
-    //   console.log("All users:",users);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'An error occurred' });
@@ -63,11 +61,9 @@ app.post('/api/login', async (req, res) => {
 
   app.get('/checkUser', async (req, res) => {
     const { username , password } = req.query;
-  console.log(username);
     try {
       // Find the user in the database
       const user = await User.findOne({ username });
-  console.log(user);
       if (user) {
         // Check if the password matches
         if (user.password === password) {
@@ -87,44 +83,50 @@ app.post('/api/login', async (req, res) => {
   });
 
 
-  app.post('/api/save-content', async (req, res) => {
-    const { username, content } = req.body;
-  console.log("backend",username,content);
-    try {
-      const user = await User.findOne({ username });
-      console.log("backend user",user);
-      if (user ) {
-        user.quillContent.push({ type: 'text', data: content });
-        console.log(user);
-        await user.save();
-        res.json({ message: 'Content saved successfully' });
-      } else {
-        res.status(404).json({ error: 'User not found' });
-      }
-    } catch (error) {
-      console.error('Error saving content:', error);
-      res.status(500).json({ error: 'An error occurred' });
-    }
-  });
+// ... Existing code ...
 
-  app.get('/api/get-content', async (req, res) => {
-    const { username } = req.query;
-    try {
-      const user = await User.findOne({ username });
-      console.log("leng",user.quillContent.length>0);
-      if (user &&  user.quillContent.length>0) {
-        const content = user.quillContent[user.quillContent.length - 1].data;
-        res.json({ content });
-      } else if(user && !user.quillContent.length>0){
-        res.json("");
-      } else {
-        res.status(404).json({ error: 'User not found' });
-      }
-    } catch (error) {
-      console.error('Error fetching content:', error);
-      res.status(500).json({ error: 'An error occurred' });
+app.post('/api/save-content', async (req, res) => {
+  const { username, content } = req.body;
+  try {
+    const user = await User.findOne({ username });
+
+    if (user) {
+      
+      const delta = JSON.parse(content);
+      
+      user.quillContent[0]=delta;
+      
+      await user.save();
+      res.json({ message: 'Content saved successfully' });
+    } else {
+      console.log("user not dfound");
+      res.status(404).json({ error: 'User not found' });
     }
-  });
+  } catch (error) {
+    console.error('Error saving content:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+app.get('/api/get-content', async (req, res) => {
+  const { username } = req.query;
+  try {
+    const user = await User.findOne({ username });
+
+    if (user && user.quillContent.length ===1) {
+      const content = user.quillContent[0];
+      res.json({ content });
+    } else if (user && !user.quillContent.length === 0) {
+      res.json({ content: '' });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching content:', error);
+    res.status(500).json({ error: 'An error occurred' });
+     }
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
