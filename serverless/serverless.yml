@@ -1,0 +1,50 @@
+service: serverless
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: ap-south-1
+  environment:
+    MONGODB_URI: "mongodb+srv://nitesh:alkamili@cluster.5lnly9w.mongodb.net/loginPage"
+  httpApi:
+    cors: true
+
+
+
+
+functions:
+  register:
+    handler: backend/handler.register
+    events:
+      - httpApi:
+          path: /api/register
+          method: post
+          
+  checkUser:
+    handler: backend/handler.checkUser
+    events:
+      - httpApi:
+          path: /api/checkUser
+          method: get
+  
+  saveContent:
+    handler: backend/handler.saveContent
+    events:
+      - httpApi:
+          path: /api/save-content
+          method: post
+
+  getContent:
+    handler: backend/handler.getContent
+    events:
+      - httpApi:
+          path: /api/get-content
+          method: get
+
+  razorpay:
+    handler: backend/handler.razorpay
+    events:
+      - httpApi:
+          path: /razorpay
+          method: post

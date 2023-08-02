@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "serverless": "^3.33.0",
+    "serverless-apigw-binary": "^0.4.4"
+  },
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "formidable": "^3.5.0",
+    "razorpay": "^2.9.1",
+    "shortid": "^2.2.16"
+  }
+}
