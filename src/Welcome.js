@@ -4,6 +4,7 @@ import ReactQuill from 'react-quill';
 import axios from 'axios';
 import styled from 'styled-components';
 import 'react-quill/dist/quill.snow.css';
+import { API_BASE_URL } from './config';
 
 const Wrapper = styled.div`
 
@@ -69,31 +70,48 @@ export const Welcome = () => {
   ];
 
   const saveQuill = async () => {
-    console.log('save clicked');
     const formData = new FormData();
-    console.log('data', username, JSON.stringify(value));
-    formData.append('username', username);
-    formData.append('content', JSON.stringify(value));
-    console.log('formData:', formData, username);
-    for (const entry of formData.entries()) {
-      console.log('entries', entry);
-    }
-    try {
-      console.log(formData.get('username'));
-      await axios.post('http://localhost:5000/api/save-content', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+    console.log(username,JSON.stringify({ username }))
+  formData.append('username', username);
+  formData.append('content', JSON.stringify(value));
+  console.log("data:",JSON.stringify(value));
+  try {
+    // const response = await fetch(`${API_BASE_URL}api/save-content`, {
+    //   method: 'POST',
+      // headers: {
+      //   'Content-Type': 'application/json',
+      // },
+    //   body: JSON.stringify({ username }),
+    // });
+    
+    const response = await fetch(`${API_BASE_URL}api/save-content`, {
+      method: 'POST', 
+       headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      body: formData, // Send the FormData object as the request body
+    });
+
+
+  
+    if (response.ok) {
       console.log('Data saved successfully!');
-    } catch (error) {
-      console.error('Error saving data:', error);
+    } else {
+      console.error('Error saving data:', response.status, response.statusText);
+      // If you want to get more information about the error, you can use:
+      const errorData = await response.json();
+      console.error('Error saving data:', errorData);
     }
-  };
+  } catch (error) {
+    console.error('Fetch error:', error);
+  }
+  
+}
 
   const fetchContent = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/get-content?username=${username}`);
+      // const response = await axios.get(`http://localhost:5000/api/get-content?username=${username}`);
+      const response = await axios.get(`${API_BASE_URL}api/get-content?username=${username}`);
       const { content } = response.data;
       console.log('fetch content', content);
       setValue(content);

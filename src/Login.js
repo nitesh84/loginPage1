@@ -4,11 +4,15 @@ import { isEqual } from 'lodash';
 import styled from 'styled-components';
 import './global.css'
 
+import { API_BASE_URL } from './config';
+import Footer from './Footer';
+
 const EntireContainer = styled.div`
   background: linear-gradient(to bottom right, #ff8a00, #e52e71);
   height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
 `;
 
@@ -20,6 +24,14 @@ const LoginContainer = styled.div`
   width: 18vw;
 `;
 
+const CenteredContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+`;
+
+
 const Title = styled.h1`
   text-align: center;
   margin-bottom: 20px;
@@ -28,10 +40,6 @@ const Title = styled.h1`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-`;
-
-const Label = styled.label`
-  margin-bottom: 10px;
 `;
 
 const Input = styled.input`
@@ -47,6 +55,7 @@ const Button = styled.button`
   background-color: #ff8a00;
   color: white;
   border: none;
+  margin-bottom:10px;
 
   &:hover {
     background-color: #e52e71;
@@ -75,40 +84,43 @@ export const Login = () => {
     try {
       // Send the login data to the backend API
       const response = await fetch(
-        `http://localhost:5000/checkUser?username=${username}&password=${password}`,
+        `${API_BASE_URL}/api/checkUser?username=${username}&password=${password}`,
         {
           method: 'GET',
-          // headers: {
-          //   'Content-Type': 'application/json',
-          // },
-          // body: JSON.stringify({ username, password }),
+          // headers: 
+          // }, 
+          // body: JSON.stringify({ username, password }),{
+          //   'Content-Type': 'application/json', q
         }
       );
 
-      console.log(response, response.ok);
-      if (response.ok) {
+      console.log("here reached",response, response.ok);
+      if (response.ok) {          
         const result = await response.text();
+        console.log("test",result,isEqual(result,"User exists and password is correct"))
         if (isEqual(result, 'User exists and password is correct')) {
           localStorage.setItem('user', username);
           navigate(`/welcome/${username}`);
         } else {
           setSubmit(true);
+          console.log("insde if")
           console.error('An error occurred');
         }
       }
     } catch (error) {
       setSubmit(true);
-      console.error('An error occurred', error);
+      console.log("outside if",);
+          console.error('An error occurred', error);
     }
   };
 
   return (
     <EntireContainer>
+      <CenteredContainer>
       <LoginContainer>
         <Title>Login Page</Title>
         <Form onSubmit={handleSubmit}>
-          <Label>
-            Username:
+       
             <Input
               type="text"
               value={username}
@@ -118,19 +130,22 @@ export const Login = () => {
               }}
               placeholder="Username"
             />
-          </Label>
+          
           <br />
-          <Label>
-            Password:
+          
             <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
             />
-          </Label>
+          
           <br />
-          <Button className='button' type="submit">Submit</Button>
+          <Button className='button' type="submit">Login</Button>
+          <Button className='button'  onClick={(e)=>{
+              e.preventDefault();
+              navigate("/");
+          }}>NEW USER</Button>
           {submit && (
             <ErrorMessage>
               Either username or password is wrong
@@ -138,6 +153,9 @@ export const Login = () => {
           )}
         </Form>
       </LoginContainer>
+      </CenteredContainer>
+      {/* Footer is here */}
+      <Footer/>
     </EntireContainer>
   );
 };
