@@ -8,7 +8,7 @@ import { API_BASE_URL } from './config';
 import Footer from './Footer';
 
 const EntireContainer = styled.div`
-  background: linear-gradient(to bottom right, #ff8a00, #e52e71);
+  background:  #D3D9DF;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -21,8 +21,16 @@ const LoginContainer = styled.div`
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  width: 18vw;
+  width:40vw;
+  
+
+  @media (max-width: 450px) {
+    width: 320px; // Adjust the width for smaller screens
+    background-color: #D3D9DF;
+    box-shadow: none;
+  }
 `;
+
 
 const CenteredContainer = styled.div`
   display: flex;
@@ -48,17 +56,30 @@ const Input = styled.input`
   margin-left: 10px;
   border-radius:10px;
   border:0px;
+
+  @media (max-width:450px)  {
+       width:320px ; // Adjust the width for smaller screens
+       height:50px ;
+       margin-left:-25px;
+     }
 `;
 
 const Button = styled.button`
   padding: 10px 15px;
-  background-color: #ff8a00;
+  background-color:rgba(0, 62, 128, 1);
+
   color: white;
   border: none;
   margin-bottom:10px;
 
   &:hover {
     background-color: #e52e71;
+  }
+
+  @media (max-width:450px)  {
+    width:320px ; // Adjust the width for smaller screens
+    height:50px ;
+    margin-left:-25px;
   }
 `;
 

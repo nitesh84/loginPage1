@@ -163,17 +163,19 @@ amount: amountInput,
   
       const options = {
         "key": "rzp_test_r3o2qLZPBVSn8M", // Enter the Key ID generated from the Dashboard
+        // "subscription_id": "sub_MOeLZBnkseLgra",
         "amount": `${amountInput*100}`, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
         "currency": data.currency,
-        "name": "Patreon", // your business name
+        "name": "Satat", // your business name
         "description": "Thank you",
-        "image": "https://example.com/your_logo",
+        "image": "https://www.satat.tech/wp-content/uploads/2022/03/satat_logo.png",
         "order_id": data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
         "handler": function (response){
           alert(response.razorpay_payment_id);
           alert(response.razorpay_order_id);
+          alert(response.razorpay_subscription_id)
           alert(response.razorpay_signature)
-      },
+      },    
         "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
             "name": "Gaurav Kumar", //your customer's name
             "email": "gaurav.kumar@example.com",
@@ -221,6 +223,53 @@ amount: amountInput,
 };
 
 // Create a styled footer container using the styled() function
+
+// withRazorPayDialog.js
+
+const withRazorPayDialog = (Component) => {
+  return () => {
+    const [showModal, setShowModal] = useState(false);
+    const [amountInput, setAmountInput] = useState('');
+    const [selectedTab, setSelectedTab] = useState('one-time'); // Default to one-time payment
+
+    useEffect(() => {
+      loadRazorPay();
+    }, []);
+
+    const handleTabChange = (tab) => {
+      setSelectedTab(tab);
+    };
+
+    const handleSubmit = () => {
+      displayRazorPay();
+      setShowModal(false);
+    };
+
+    const handleAmountInputChange = (event) => {
+      setAmountInput(event.target.value);
+    };
+
+    const displayRazorPay = async () => {
+      // ... your existing Razorpay display logic ...
+    };
+
+    return (
+      <Component
+        showModal={showModal}
+        setShowModal={setShowModal}
+        selectedTab={selectedTab}
+        handleTabChange={handleTabChange}
+        handleSubmit={handleSubmit}
+        handleAmountInputChange={handleAmountInputChange}
+      />
+    );
+  };
+};
+
+// export default withRazorPayDialog;
+
+
+
 
 
 export default Footer;
