@@ -1,6 +1,12 @@
 Link: app1.dev1satat.in
 git push origin1 main
 
+Test Card for Indian Payments
+Card Network	Card Number	           CVV 	       Expiry Date
+Mastercard	5267 3181 8797 5449  	Random CVV	Any future date
+Visa	      4111 1111 1111 1111	  Random CVV	Any future date
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
